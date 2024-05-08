@@ -1,0 +1,124 @@
+body{
+    background-color: lightgray;
+    overflow-x: hidden;
+}
+header{
+    background-image: url(Photos\ P7\ JS\ Les\ petits\ plats/Image-de-fond.jpg);
+    background-size: cover;
+    padding: 200px 0; 
+}
+header img{
+    height: 26px;
+    position: absolute;
+    top: 5%;
+    left: 3%;
+}
+h1, .fontStyle, h5{
+    font-family: 'Anton';
+    font-weight: 400;
+}
+header input{
+    height:4rem;
+}
+.margin-btn-serch{
+    margin-top: 1rem;
+    margin-right: 0.5rem;
+} 
+.margin-btn-close{
+    margin-right: 3rem;
+    margin-top: 1rem;
+}
+.clear-button {
+    display: none; /* Bouton invisible par défaut */
+}
+  
+.search-container:focus-within .clear-button {
+   display: block; /* Afficher le bouton lorsqu'il y a du texte dans le champ */
+}
+#searhButton:hover{
+    background-color: #ffc107;
+    color: black;
+    border: #ffc107;
+}
+/*liste */
+.liste-block{
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border-radius: 11px;
+    max-height: 324px;
+    visibility: hidden;
+}
+.width-90{
+    width: 90%;
+}
+.deco-margin{
+    text-decoration: none;
+}
+.flech {
+    position: absolute;
+    right: 3%;
+    top:30%;
+}
+.style-btn-close{
+    font-size: 12px;
+    color: rgba(122, 122, 122, 1);
+    margin-right: 2rem;
+    margin-top: 0.5rem;
+}
+.btn-hover{
+    color: rgba(122, 122, 122, 1);
+    font-size: 12px;
+}
+.style-btn-close:hover, .btn-hover:hover{
+    color: black;
+}
+section button{
+    padding: 16px 80px 16px 15px;
+    background-color: white;
+    border-radius: 11px;
+    border: none;
+    position: relative;
+
+}
+.flex-liste{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.size-14{
+    font-size: 0.875rem;
+}
+.size-11{
+    font-size: 0.75rem;
+}
+.raduis-21{
+    border-radius: 1.313rem;
+}
+.raduis-21-top{
+    border-top-left-radius: 1.313rem;
+    border-top-right-radius: 1.313rem;
+}
+.block-image{
+    height: 15.813rem;
+}
+.block-image .image-element{
+    height: 100%;
+    object-fit: cover;
+}
+.dom-description{
+    display: -webkit-box;
+   -webkit-line-clamp: 5; /* Limite le nombre de lignes à afficher */
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+}
+.time-block{
+    top: 2%;
+    right: 7%;
+    background-color: #ffc107;
+    border-radius: 14px;
+    padding: 5px 15px;
+    font-size: 0.75rem;
+}
