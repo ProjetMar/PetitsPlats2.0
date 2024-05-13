@@ -1,12 +1,10 @@
-function toggleSortOptions(value){
-    if(value == "Ingrédients"){
-        console.log("Ingrédients")
-    }else if(value == "Appareils"){
-        console.log("Appareils")
-    }else if(value == "ustentiels"){
-        
-    }
-}
+// function TriTableau (tableau){
+//     let TriIngrediends = Array.from(tableau);
+//     TriIngrediends.sort(function(a,b){
+//         return(a.localeCompare(b))
+//     });
+//     return(TriIngrediends)
+// }
 class ListeDom{
     constructor(data, liste){
         this.data = data;

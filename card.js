@@ -29,6 +29,7 @@ class Card{
         this.description = data.description;
         this.time = data.time;
         this.ingredients = data.ingredients;
+        this.id = data.id;
       }
     get picture (){
         return(`Photos\ P7\ JS\ Les\ petits\ plats/${this.image}`)
@@ -56,6 +57,8 @@ class Card{
     }
     getCardRecette(){
         const clone = this.template('templateCard');
+        const elementParent = clone.querySelector('div');
+        elementParent.setAttribute('id', this.id);
         const titre = clone.querySelector('.dom-titre');
         titre.textContent = this.name;
         const image = clone.querySelector('img');
@@ -78,18 +81,38 @@ async function init() {
     const recettes = await getRecettes();
     // la methode ftatMap permet de extraire les ingredients des tab et aussi de creer un tableau contient les 
     //elements des sous tableau du tableau  
+    // new set permet d'elever la repetition des elements 
     const ingredients =[...new Set(recettes.map(recette=> recette.ingredients).flatMap(innerArray => innerArray.map(obj => obj.ingredient)))];
     console.log(ingredients);
+    //remplir les listes 
+    //liste ingredients
     const liste = new ListeDom(ingredients, "ingredients");
     liste.getListe();
+    // liste appareils
     const Appareils =[...new Set(recettes.map(recette=> recette.appliance))];
     const listeA = new ListeDom(Appareils, "Appareils");
     listeA.getListe();
-    console.log(Appareils);
+    //liste ustentiels 
     const ustentiels =[...new Set(recettes.map(recette=> recette.ustensils).flat())];
     const listeU = new ListeDom(ustentiels, "Ustensiles");
     listeU.getListe();
-    console.log(ustentiels)
+    
     displayData(recettes);
+    const titres = recettes.map(recette=>recette.name);
+    console.log(titres)
+    const descriptions = recettes.map(recette=>recette.description);
+    console.log(descriptions)
+    const ingredientsElements = recettes.map(recette=> recette.ingredients);
+    console.log(ingredientsElements)
+    document.getElementById('searhButton').addEventListener('click', ()=>{
+        const input = document.getElementById('input1');
+        if(input.value.length>=3){
+            recherche(titres, descriptions ,ingredientsElements,input.value)
+        }
+    })
+
+    // recherche(titres, descriptions ,ingredientsElements , "limonade");
+    // let tab = recherche(titres, descriptions ,ingredientsElements ,"limonade");
+    // supprimeCard(tab);
 }
 init()
