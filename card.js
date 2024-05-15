@@ -8,20 +8,102 @@ async function getRecettes() {
      }
     
 }
-
-async function displayData(recettes) {
-    const recettesSection = document.querySelector(".sectionCard");
-
-    recettes.forEach((recette) => {
-        const recetteModel =new Card(recette);
-        const CardDom = recetteModel.getCardRecette();
-        recettesSection.appendChild(CardDom);
-    });
-
-    const nbrRecettes = recettes.length;
-    const domNbrRecettes = document.querySelector('.fontStyle');
-    domNbrRecettes.textContent = `${nbrRecettes} recettes`;
+class IndexPage{
+    constructor(recettes){
+        this.recettes = recettes; 
+        document.getElementById('searhButton').addEventListener('click', ()=>{
+            const input = document.getElementById('input1');
+            if(input.value.length>=3){
+                this.recherche(input.value)
+            }
+        })
+    }
+    // la methode ftatMap permet de extraire les ingredients des tab et aussi de creer un tableau contient les 
+       //elements des sous tableau du tableau  
+       // new set permet d'elever la repetition des elements 
+    get ingredients(){
+         return([...new Set(this.recettes.map(recette=> recette.ingredients).flatMap(innerArray => innerArray.map(obj => obj.ingredient)))])
+    }
+    get Appareils(){
+        return([...new Set(this.recettes.map(recette=> recette.appliance))])
+    }
+    get ustensils(){
+        return([...new Set(this.recettes.map(recette=> recette.ustensils).flat())])
+    }
+    get titres(){
+        return (this.recettes.map(recette=>recette.name))
+    }
+    get descriptions(){
+        return(this.recettes.map(recette=>recette.description))
+    }
+    get ingredientsElements(){
+        return(this.recettes.map(recette=> recette.ingredients))
+    }
+    displayListe(){
+       
+         let map ={
+            "ingredients": this.ingredients,
+            "Appareils": this.Appareils,
+            "Ustensiles": this.ustensils
+         }
+        for (let key in map){
+            let liste = new ListeDom(map[key],key );
+            liste.getListe();
+        }
+    }
+    displayData(){
+        const recettesSection = document.querySelector(".sectionCard");
+    
+        this.recettes.forEach((recette) => {
+            const recetteModel =new Card(recette);
+            const CardDom = recetteModel.getCardRecette();
+            recettesSection.appendChild(CardDom);
+        });
+    
+        const nbrRecettes = this.recettes.length;
+        const domNbrRecettes = document.querySelector('.fontStyle');
+        domNbrRecettes.textContent = `${nbrRecettes} recettes`;
+    }
+    listeIngredients (ingredientsElement, expression){
+        let existe = false ; 
+        let i = 0 ; 
+        while(i<ingredientsElement[i].length && existe == false){
+            if(ingredientsElement[i].toLowerCase().includes(expression)){
+                existe = true;
+            }
+            i = i+1;
+        }
+        return(existe)
+    }
+    recherche(expression){
+        let tabIncludes = [];
+        let tabId = [];
+        for(let i=0; i< this.titres.length; i++){
+            if ((this.titres[i].toLowerCase().includes(expression)) || 
+            (this.descriptions[i].toLowerCase().includes(expression)) || (this.listeIngredients(this.ingredientsElements[i], expression)) ){
+                tabIncludes.push(this.titres[i]);
+                tabId.push(i+1);
+            }
+        }
+        console.log(tabIncludes)
+        console.log(tabId)
+        if(tabId.length == 0){
+            alert(`Aucune recette ne contient " ${expression} " vous pouvez chercher (tarte aux pommes)`)
+            console.log(tabId == [])
+        }else{
+            return(this.supprimeCard(tabId))
+        }
+        
+    }
+    supprimeCard(tab){
+        for(let i=0 ; i<50; i++){
+            if((tab.includes(i+1))==false ){
+                document.getElementById(i+1).remove();
+            }
+        }
+    }
 }
+
 class Card{
     constructor(data){
         this.name = data.name;
@@ -79,38 +161,21 @@ class Card{
 async function init() {
     // Récupère les datas des photographes
     const recettes = await getRecettes();
-    // la methode ftatMap permet de extraire les ingredients des tab et aussi de creer un tableau contient les 
-    //elements des sous tableau du tableau  
-    // new set permet d'elever la repetition des elements 
-    const ingredients =[...new Set(recettes.map(recette=> recette.ingredients).flatMap(innerArray => innerArray.map(obj => obj.ingredient)))];
-    console.log(ingredients);
-    //remplir les listes 
-    //liste ingredients
-    const liste = new ListeDom(ingredients, "ingredients");
-    liste.getListe();
-    // liste appareils
-    const Appareils =[...new Set(recettes.map(recette=> recette.appliance))];
-    const listeA = new ListeDom(Appareils, "Appareils");
-    listeA.getListe();
-    //liste ustentiels 
-    const ustentiels =[...new Set(recettes.map(recette=> recette.ustensils).flat())];
-    const listeU = new ListeDom(ustentiels, "Ustensiles");
-    listeU.getListe();
-    
-    displayData(recettes);
-    const titres = recettes.map(recette=>recette.name);
-    console.log(titres)
-    const descriptions = recettes.map(recette=>recette.description);
-    console.log(descriptions)
-    const ingredientsElements = recettes.map(recette=> recette.ingredients);
-    console.log(ingredientsElements)
-    document.getElementById('searhButton').addEventListener('click', ()=>{
-        const input = document.getElementById('input1');
-        if(input.value.length>=3){
-            recherche(titres, descriptions ,ingredientsElements,input.value)
-        }
-    })
-
+    const indexpage = new IndexPage(recettes)
+    indexpage.displayData()
+    indexpage.displayListe()
+    // const titres = recettes.map(recette=>recette.name);
+    // console.log(titres)
+    // const descriptions = recettes.map(recette=>recette.description);
+    // console.log(descriptions)
+    // const ingredientsElements = recettes.map(recette=> recette.ingredients);
+    // console.log(ingredientsElements)
+    // document.getElementById('searhButton').addEventListener('click', ()=>{
+    //     const input = document.getElementById('input1');
+    //     if(input.value.length>=3){
+    //         recherche(titres, descriptions ,ingredientsElements,input.value)
+    //     }
+    // })
     // recherche(titres, descriptions ,ingredientsElements , "limonade");
     // let tab = recherche(titres, descriptions ,ingredientsElements ,"limonade");
     // supprimeCard(tab);

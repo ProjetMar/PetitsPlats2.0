@@ -38,41 +38,41 @@
 // }
 // liste est un element de la liste des ul 
 
-function listeIngredients (ingredientsElement, expression){
-    let existe = false ; 
-    let i = 0 ; 
-    while(i<ingredientsElement[i].length && existe == false){
-        if(ingredientsElement[i].toLowerCase().includes(expression)){
-            existe = true;
-        }
-        i = i+1;
-    }
-    return(existe)
-}
-function recherche(titres, descriptions ,ingredientsTab , expression){
-    let tabIncludes = [];
-    let tabId = [];
-    for(let i=0; i< titres.length; i++){
-        if ((titres[i].toLowerCase().includes(expression)) || 
-        (descriptions[i].toLowerCase().includes(expression)) || (listeIngredients(ingredientsTab[i], expression)) ){
-            tabIncludes.push(titres[i]);
-            tabId.push(i+1);
-        }
-    }
-    console.log(tabIncludes)
-    console.log(tabId)
-    if(tabId.length == 0){
-        alert(`Aucune recette ne contient " ${expression} " vous pouvez chercher (tarte aux pommes)`)
-        console.log(tabId == [])
-    }else{
-        return(supprimeCard(tabId))
-    }
+// function listeIngredients (ingredientsElement, expression){
+//     let existe = false ; 
+//     let i = 0 ; 
+//     while(i<ingredientsElement[i].length && existe == false){
+//         if(ingredientsElement[i].toLowerCase().includes(expression)){
+//             existe = true;
+//         }
+//         i = i+1;
+//     }
+//     return(existe)
+// }
+// function recherche(titres, descriptions ,ingredientsTab , expression){
+//     let tabIncludes = [];
+//     let tabId = [];
+//     for(let i=0; i< titres.length; i++){
+//         if ((titres[i].toLowerCase().includes(expression)) || 
+//         (descriptions[i].toLowerCase().includes(expression)) || (listeIngredients(ingredientsTab[i], expression)) ){
+//             tabIncludes.push(titres[i]);
+//             tabId.push(i+1);
+//         }
+//     }
+//     console.log(tabIncludes)
+//     console.log(tabId)
+//     if(tabId.length == 0){
+//         alert(`Aucune recette ne contient " ${expression} " vous pouvez chercher (tarte aux pommes)`)
+//         console.log(tabId == [])
+//     }else{
+//         return(supprimeCard(tabId))
+//     }
     
-}
-function supprimeCard(tab){
-    for(let i=0 ; i<50; i++){
-        if((tab.includes(i+1))==false ){
-            document.getElementById(i+1).remove();
-        }
-    }
-}
+// }
+// function supprimeCard(tab){
+//     for(let i=0 ; i<50; i++){
+//         if((tab.includes(i+1))==false ){
+//             document.getElementById(i+1).remove();
+//         }
+//     }
+// }
