@@ -25,7 +25,7 @@
                 <div class="col-10 m-auto">   
                    <div class="search-container position-relative">
                         <input id="input1" oninput="showClearButton('input1')" class="position-absolute form-control" type="text" placeholder="Rechercher une recette, un ingrédient, ..." aria-label="Rechercher une recette, un ingrédient, ..." aria-describedby="button-addon2">
-                        <button onclick="clearInput('input1')" class="clear-button position-absolute end-0 margin-btn-close btn text-secondary"><i class="fa-solid fa-xmark"></i></span></button>
+                        <button id="clearBtnInput1" onclick="clearInput('input1')" class="clear-button position-absolute end-0 margin-btn-close btn text-secondary"><i class="fa-solid fa-xmark"></i></span></button>
                         <button id="searhButton" class="position-absolute end-0 margin-btn-serch rounded-2 btn btn-dark" type="button" id="button-addon2"><i class="fa-solid fa-magnifying-glass"></i></button>  
                    </div>  
                 </div>
@@ -38,11 +38,11 @@
                 <div class="d-flex flex-wrap justify-content-start">
 
                     <div class="position-relative mx-1 mt-1">
-                        <button type="button" value="Ingrédients" onclick="toggleSortOptions('ingredients')">Ingrédients
+                        <button type="button" value="Ingrédients" onclick="openListe('ingredients')">Ingrédients
                             <span class="flech"><i aria-hidden="true" class="fa-solid fa-chevron-down"></i></span>
                         </button>
                         <div id="ingredients" class = "liste-block">
-                            <button type="button" onclick="toggleSortOptions('ingredients')">Ingrédients
+                            <button type="button" onclick="closeListe('ingredients')">Ingrédients
                                 <span class="flech"><i class="fa-solid fa-chevron-up"></i></span>
                             </button>
                             <div class="d-flex justify-content-center search-container position-relative">
@@ -54,13 +54,12 @@
                            </ul>
                         </div>
                     </div>
-
                     <div class="position-relative mx-1 mt-1">
-                        <button type="button" value="Appareils" onclick="toggleSortOptions('Appareils')">Appareils
+                        <button type="button" value="Appareils" onclick="openListe('Appareils')">Appareils
                             <span class="flech"><i aria-hidden="true" class="fa-solid fa-chevron-down"></i></span>
                         </button>
                         <div id="Appareils" class = "liste-block">
-                            <button type="button" onclick="toggleSortOptions('Appareils')">Appareils
+                            <button type="button" onclick="closeListe('Appareils')">Appareils
                                 <span class="flech"><i class="fa-solid fa-chevron-up"></i></span>
                             </button>
                             <div class="d-flex justify-content-center search-container position-relative">
@@ -74,11 +73,11 @@
                     </div>
 
                     <div class="position-relative mx-1 mt-1">
-                        <button type="button" value="Ustensiles" onclick="toggleSortOptions('Ustensiles')">Ustensiles
+                        <button type="button" value="Ustensiles" onclick="openListe('Ustensiles')">Ustensiles
                             <span class="flech"><i aria-hidden="true" class="fa-solid fa-chevron-down"></i></span>
                         </button>
                         <div id="Ustensiles" class = "liste-block">
-                            <button type="button" onclick="toggleSortOptions('Ustensiles')">Ustensiles
+                            <button type="button" onclick="closeListe('Ustensiles')">Ustensiles
                                 <span class="flech"><i class="fa-solid fa-chevron-up"></i></span>
                             </button>
                             <div class="d-flex justify-content-center search-container position-relative">
@@ -104,7 +103,7 @@
         </div>
     </section>
     <template id="templateOptionTri">
-        <li class="ps-0 border-0 list-group-item"></li>
+        <li type="button" class="ps-0 border-0 list-group-item"></li>
     </template>
     <template id="templateElementListe">
         <li class="ps-0 border-0 list-group-item"><p class="dom-ingredient mb-0 size-14"></p><p class="dom-unit size-11"></p></li>
@@ -126,6 +125,12 @@
                   </ul>
                 </div>
             </div>
+        </div>
+    </template>
+    <template id="tag">
+        <div class="tag mt-1 d-flex justify-content-between btn btn-warning pe-0 ps-0">
+            <p class="text-center p-0 m-auto ms-2"></p>
+            <button class=" btn"><i class="fa-solid fa-xmark"></i></span></button>
         </div>
     </template>
     <script src="https://kit.fontawesome.com/a3afe4fc65.js" crossorigin="anonymous"></script>

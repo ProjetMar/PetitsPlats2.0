@@ -12,45 +12,34 @@ function recpereliste (inputId){
 function showClearButton(inputId) {
     const input = document.getElementById(inputId);
     const clearButton = input.nextElementSibling;
-    
+    if (input.value.length>0) {
+            clearButton.style.display = 'block';
+    } else {
+         clearButton.style.display = 'none';
+    }
     if(inputId !='input1'){
-        const liste = recpereliste(inputId);
+       const liste = recpereliste(inputId);
         console.log(liste)
-        const items = Array.from(liste.getElementsByTagName("li"));
-        // Récupérer l'état initial de la liste
-        const initialListState = [...items];
-        if(input.value==''){
-            liste.querySelectorAll('li').forEach((li)=>{li.remove()})
-            // Réorganiser les éléments dans la liste
-            initialListState.forEach((item)=> {
-                console.log(item)
-                liste.appendChild(item);
-            });       
-        }
-        if (input.value.length>0) {
-        clearButton.style.display = 'block';
-        } else {
-        clearButton.style.display = 'none';
-        }
-        if(input.value.length>0 && input.value.length< 3){
+         const items = Array.from(liste.getElementsByTagName("li"));
+         if(input.value.length>0 && input.value.length< 3){
                 // Trier les éléments en fonction de la pertinence par rapport à la valeur saisie
             items.sort(function(a, b) {
-                const textA = a.textContent.toLowerCase();
-                const textB = b.textContent.toLowerCase();
+              const textA = a.textContent.toLowerCase();
+               const textB = b.textContent.toLowerCase();
     
-                // Calculer la pertinence des éléments par rapport à la valeur saisie
-                const relevanceA = textA.includes(input.value) ? 1 : 0;
-                const relevanceB = textB.includes(input.value) ? 1 : 0;
+              // Calculer la pertinence des éléments par rapport à la valeur saisie
+             const relevanceA = textA.includes(input.value) ? 1 : 0;
+             const relevanceB = textB.includes(input.value) ? 1 : 0;
     
                 // Trier les éléments en fonction de leur pertinence
-                return relevanceB - relevanceA;
-            }); 
+                 return relevanceB - relevanceA;
+             }); 
             
             // Réorganiser les éléments dans la liste
-            items.forEach(function(item) {
+             items.forEach(function(item) {
             liste.appendChild(item);
             });
-        }else{
+         }else{
             // suprimer les elements qui ne contient pas l'input
             let newitems = []
             console.log(input.value)
@@ -65,9 +54,10 @@ function showClearButton(inputId) {
             newitems.forEach((item)=> {
                 console.log(item)
                 liste.appendChild(item);
-            });       
-        }       
-    }
+            });
+        }
+    }              
+    
      
     
 }
@@ -95,28 +85,33 @@ function appliquerCSS(parentList) {
 }
 // j'ai ajouter la prop order et la fonction appliquer pour resoudre le problem des boutons qui seront 
 //sous les elements ouvert des autres boutons 
-function toggleSortOptions(listId) {
+function openListe(listId) {
     const listes = document.querySelectorAll('.liste-block');
     const list = document.getElementById(listId);
     const parentList = list.parentElement;
     
-    if (list.style.visibility === "hidden") {
-        for(let i=0; i<listes.length; i++){
-            listes[i].style.visibility = "hidden";
-            listes[i].parentElement.style.order = "0";
-        }
-        // Appelez la fonction une fois au chargement de la page
-        appliquerCSS(parentList);
-        // Ajoutez un écouteur d'événement pour redimensionner la fenêtre
-        window.addEventListener("resize", appliquerCSS(parentList));
-        list.style.visibility = "visible";
-    } else {
-        list.style.visibility = "hidden";
-        parentList.style.order = "0";
-    }
-}
-
-// function filtreRecette(inputId, listId){
-//     const input = document.getElementById(inputId);
     
-// }
+    for(let i=0; i<listes.length; i++){
+        listes[i].style.visibility = "hidden";
+        listes[i].parentElement.style.order = "0";
+    }
+    // Appelez la fonction une fois au chargement de la page
+    appliquerCSS(parentList);
+    // Ajoutez un écouteur d'événement pour redimensionner la fenêtre
+    window.addEventListener("resize", appliquerCSS(parentList));
+    list.style.visibility = "visible";
+    list.querySelectorAll('li').forEach((li)=>{
+        li.addEventListener('click',()=>{
+            const tag = new Tag(li.textContent);
+            const elementTag = tag.getTag();
+            parentList.appendChild(elementTag);
+        })
+    })
+   
+}
+function closeListe(listId){
+    const list = document.getElementById(listId);
+    const parentList = list.parentElement;
+    list.style.visibility = "hidden";
+     parentList.style.order = "0";
+}

@@ -122,3 +122,6 @@ section button{
     padding: 5px 15px;
     font-size: 0.75rem;
 }
+.tag{
+    border-radius: 0.625rem;
+}

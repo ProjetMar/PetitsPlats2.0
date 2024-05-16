@@ -11,24 +11,65 @@ async function getRecettes() {
 class IndexPage{
     constructor(recettes){
         this.recettes = recettes; 
+        this.recettesAfficher = [];
+        this.tabId = [];
+        this.NewTabId=[]; 
+        this.inputPrincipale = document.getElementById('input1');
         document.getElementById('searhButton').addEventListener('click', ()=>{
-            const input = document.getElementById('input1');
-            if(input.value.length>=3){
-                this.recherche(input.value)
+            this.btnRecherchePrincipale()
+        })
+        this.inputPrincipale.addEventListener('keydown',(e)=>{
+            if(e.key == "Enter"){
+                this.btnRecherchePrincipale()
             }
         })
+        this.inputPrincipale.addEventListener('input', ()=>{
+            this.backToInitial()
+        })
+        document.getElementById('clearBtnInput1').addEventListener('click',()=>{
+            this.backToInitial()
+        })
+        // pour faire revenir la liste à son etat intial 
+        document.querySelectorAll('.liste-block input').forEach((element)=>element.addEventListener('input',(e)=>{
+             if(e.currentTarget.value == ''){
+                this.displayListe()
+             }
+        }))
+
+        // this.liste.forEach((element)=>{element.addEventListener('click',this.rechercheTag.bind(this))})
+    }
+    btnRecherchePrincipale(){
+        const input = document.getElementById('input1');
+        if(input.value.length>=3){
+            this.recherche(input.value.toLowerCase())
+            this.tabId=[]
+        }
+    }
+    backToInitial(){
+        if(this.inputPrincipale.value == ''){
+            this.tabId = [];
+            this.displayData();
+            this.displayListe();
+        }
+    }
+    getERecettesAfficher(){
+        if(this.tabId.length>0){
+            this.recettesAfficher = this.recettes.filter((recette)=>this.tabId.includes(recette.id))
+        }else{
+            this.recettesAfficher = this.recettes
+        }
     }
     // la methode ftatMap permet de extraire les ingredients des tab et aussi de creer un tableau contient les 
        //elements des sous tableau du tableau  
        // new set permet d'elever la repetition des elements 
     get ingredients(){
-         return([...new Set(this.recettes.map(recette=> recette.ingredients).flatMap(innerArray => innerArray.map(obj => obj.ingredient)))])
+         return([...new Set(this.recettesAfficher.map(recette=> recette.ingredients).flatMap(innerArray => innerArray.map(obj => obj.ingredient)))])
     }
     get Appareils(){
-        return([...new Set(this.recettes.map(recette=> recette.appliance))])
+        return([...new Set(this.recettesAfficher.map(recette=> recette.appliance))])
     }
     get ustensils(){
-        return([...new Set(this.recettes.map(recette=> recette.ustensils).flat())])
+        return([...new Set(this.recettesAfficher.map(recette=> recette.ustensils).flat())])
     }
     get titres(){
         return (this.recettes.map(recette=>recette.name))
@@ -40,7 +81,7 @@ class IndexPage{
         return(this.recettes.map(recette=> recette.ingredients))
     }
     displayListe(){
-       
+       this.getERecettesAfficher();
          let map ={
             "ingredients": this.ingredients,
             "Appareils": this.Appareils,
@@ -49,18 +90,20 @@ class IndexPage{
         for (let key in map){
             let liste = new ListeDom(map[key],key );
             liste.getListe();
+            liste.choixOption(this.rechercheTag.bind(this));
         }
     }
     displayData(){
         const recettesSection = document.querySelector(".sectionCard");
-    
-        this.recettes.forEach((recette) => {
+        recettesSection.innerHTML='';
+        this.getERecettesAfficher();
+        this.recettesAfficher.forEach((recette) => {
             const recetteModel =new Card(recette);
             const CardDom = recetteModel.getCardRecette();
             recettesSection.appendChild(CardDom);
         });
     
-        const nbrRecettes = this.recettes.length;
+        const nbrRecettes = this.recettesAfficher.length;
         const domNbrRecettes = document.querySelector('.fontStyle');
         domNbrRecettes.textContent = `${nbrRecettes} recettes`;
     }
@@ -77,31 +120,69 @@ class IndexPage{
     }
     recherche(expression){
         let tabIncludes = [];
-        let tabId = [];
         for(let i=0; i< this.titres.length; i++){
             if ((this.titres[i].toLowerCase().includes(expression)) || 
             (this.descriptions[i].toLowerCase().includes(expression)) || (this.listeIngredients(this.ingredientsElements[i], expression)) ){
                 tabIncludes.push(this.titres[i]);
-                tabId.push(i+1);
+                this.tabId.push(i+1);
             }
         }
         console.log(tabIncludes)
-        console.log(tabId)
-        if(tabId.length == 0){
+        console.log(this.tabId)
+        if(this.tabId.length == 0){
             alert(`Aucune recette ne contient " ${expression} " vous pouvez chercher (tarte aux pommes)`)
-            console.log(tabId == [])
+            console.log(this.tabId == [])
         }else{
-            return(this.supprimeCard(tabId))
+            return(this.displayData(), this.displayListe())
         }
         
     }
-    supprimeCard(tab){
-        for(let i=0 ; i<50; i++){
-            if((tab.includes(i+1))==false ){
-                document.getElementById(i+1).remove();
+    rechercheTag(e){
+        if(e.currentTarget.parentElement != null){
+            let tag = e.currentTarget.textContent;
+            let element =  e.currentTarget.parentElement.parentElement;
+            console.log(element)
+            console.log(tag)
+            this.getERecettesAfficher()
+            if(element.id == "ingredients"){
+                const newRecettesAfficher = this.recettesAfficher.filter((recette)=>{
+                    let existe = false;
+                    recette.ingredients.forEach((element)=>{
+                        if(element.ingredient.toLowerCase() == tag.toLowerCase()){
+                            existe = true;
+                        }
+                        
+                    })
+                    return(existe)
+                })
+                console.log(newRecettesAfficher)
+                if(this.tabId.length == 0){
+                    newRecettesAfficher.forEach((recette)=>{
+                    this.tabId.push(recette.id)
+                    
+                    })
+                }else{
+                    this.tabId = [];
+                    newRecettesAfficher.forEach((recette)=>{
+                        this.tabId.push(recette.id)
+                    })
+                    // const tab = this.tabId;
+                    // this.tabId = tab.filter((id)=>{
+                    //     id == newRecettesAfficher.id
+                    // }) 
+                }
+            }else if(element.id == "Appareils"){
+                // for(let i=0; i<this.recettesAfficher.length; i++){
+                //     if(this.recettesAfficher[i].appliance.includes(tag.toLowerCase())){
+                //         this.NewTabId.push(i+1)
+                //     }
+                // }
             }
-        }
+            return(this.displayData(), this.displayListe())
+            
+        }   
     }
+
 }
 
 class Card{
@@ -164,6 +245,9 @@ async function init() {
     const indexpage = new IndexPage(recettes)
     indexpage.displayData()
     indexpage.displayListe()
+    // document.querySelectorAll('li[type="button"]').forEach((element)=>{element.addEventListener('click', (e)=>{
+    //      indexpage.rechercheTag(e.currentTarget.textContent, e.currentTarget.parentElement.parentElement)
+    //  })})
     // const titres = recettes.map(recette=>recette.name);
     // console.log(titres)
     // const descriptions = recettes.map(recette=>recette.description);
