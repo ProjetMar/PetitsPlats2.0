@@ -100,13 +100,13 @@ function openListe(listId) {
     // Ajoutez un écouteur d'événement pour redimensionner la fenêtre
     window.addEventListener("resize", appliquerCSS(parentList));
     list.style.visibility = "visible";
-    list.querySelectorAll('li').forEach((li)=>{
-        li.addEventListener('click',()=>{
-            const tag = new Tag(li.textContent);
-            const elementTag = tag.getTag();
-            parentList.appendChild(elementTag);
-        })
-    })
+    // list.querySelectorAll('li').forEach((li)=>{
+    //     li.addEventListener('click',()=>{
+    //         const tag = new Tag(li.textContent);
+    //         const elementTag = tag.getTag();
+    //         parentList.appendChild(elementTag);
+    //     })
+    // })
    
 }
 function closeListe(listId){

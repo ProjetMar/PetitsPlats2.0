@@ -28,11 +28,11 @@ class ListeDom{
             this.liste.appendChild(element);
         }
     }
-    choixOption(callback){
-        document.querySelectorAll('li[type="button"]').forEach((element)=>{element.addEventListener('click', callback)})
-    }
+    // choixOption(callback){
+    //     document.querySelectorAll('li[type="button"]').forEach((element)=>{element.addEventListener('click', callback)})
+    // }
 }
-class Tag{
+class TagDom{
     constructor(tag){
         this.tag = tag
     }
@@ -46,5 +46,8 @@ class Tag{
         const p = clone.querySelector('p');
         p.textContent = this.tag;
         return(clone)
+    }
+    deleteOption(callback){
+        document.querySelectorAll('.tag button').forEach((element)=>{element.addEventListener('click', callback)})
     }
 }
