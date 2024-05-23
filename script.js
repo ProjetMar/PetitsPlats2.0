@@ -68,7 +68,7 @@ function clearInput(inputId) {
     const clearButton = input.nextElementSibling;
     clearButton.style.display = 'none';
 }
-
+/* 
 // Fonction pour appliquer la propriété CSS en fonction de la taille de l'écran
 function appliquerCSS(parentList) {
     // Vérifiez la largeur de l'écran
@@ -82,7 +82,7 @@ function appliquerCSS(parentList) {
         // Réinitialisez la propriété CSS si la taille de l'écran est supérieure à 768 pixels
         parentList.style.order = "0";
     }
-}
+} */
 // j'ai ajouter la prop order et la fonction appliquer pour resoudre le problem des boutons qui seront 
 //sous les elements ouvert des autres boutons 
 function openListe(listId) {
@@ -93,25 +93,22 @@ function openListe(listId) {
     
     for(let i=0; i<listes.length; i++){
         listes[i].style.visibility = "hidden";
-        listes[i].parentElement.style.order = "0";
+        // listes[i].parentElement.style.order = "0";
     }
-    // Appelez la fonction une fois au chargement de la page
+   /*  // Appelez la fonction une fois au chargement de la page
     appliquerCSS(parentList);
     // Ajoutez un écouteur d'événement pour redimensionner la fenêtre
-    window.addEventListener("resize", appliquerCSS(parentList));
+    window.addEventListener("resize", appliquerCSS(parentList)); */
     list.style.visibility = "visible";
-    // list.querySelectorAll('li').forEach((li)=>{
-    //     li.addEventListener('click',()=>{
-    //         const tag = new Tag(li.textContent);
-    //         const elementTag = tag.getTag();
-    //         parentList.appendChild(elementTag);
-    //     })
-    // })
-   
+    list.querySelectorAll('li').forEach((li)=>{
+        li.addEventListener('click',()=>{
+            closeListe(listId)
+        })
+    })
 }
 function closeListe(listId){
     const list = document.getElementById(listId);
     const parentList = list.parentElement;
     list.style.visibility = "hidden";
-     parentList.style.order = "0";
+    //  parentList.style.order = "0";
 }

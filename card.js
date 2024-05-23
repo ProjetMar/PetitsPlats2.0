@@ -14,6 +14,8 @@ class IndexPage{
         this.recettesAfficher = [];
         this.tabId = [];
         this.listTagSelect = [];
+        this.tabIdPrincipale = [];
+        this.tabIdTag = [];
         this.inputPrincipale = document.getElementById('input1');
         document.getElementById('searhButton').addEventListener('click', ()=>{
             this.btnRecherchePrincipale()
@@ -23,12 +25,12 @@ class IndexPage{
                 this.btnRecherchePrincipale()
             }
         })
-        this.inputPrincipale.addEventListener('input', ()=>{
-            this.backToInitial()
-        })
-        document.getElementById('clearBtnInput1').addEventListener('click',()=>{
-            this.backToInitial()
-        })
+        // this.inputPrincipale.addEventListener('input', ()=>{
+        //     this.backToInitial()
+        // })
+        // document.getElementById('clearBtnInput1').addEventListener('click',()=>{
+        //     this.backToInitial()
+        // })
         // pour faire revenir la liste à son etat intial 
         document.querySelectorAll('.liste-block input').forEach((element)=>element.addEventListener('input',(e)=>{
              if(e.currentTarget.value == ''){
@@ -40,16 +42,24 @@ class IndexPage{
         const input = document.getElementById('input1');
         if(input.value.length>=3){
             this.recherche(input.value.toLowerCase())
-            // j'ai oblié pourquoi j'ai ajouter cette ligne
-            // this.tabId=[]
+            this.listeRecetteChampsPrincpaleSansTag(input.value.toLowerCase())
+        }else{
+            this.backToInitial();
         }
     }
     backToInitial(){
-        if(this.inputPrincipale.value == ''){
-            this.tabId = [];
-            this.displayData();
-            this.displayListe();
+        
+        this.tabIdPrincipale=[];
+        this.listeRecetteTagSansChampsPrincipale();
+        if(this.tabIdTag.length > 0){
+            this.tabId = this.tabIdTag;
+        }else{
+            this.tabId =[];
         }
+        this.getERecettesAfficher();
+        this.displayData();
+        this.displayListe();
+        
     }
     getERecettesAfficher(){
         if(this.tabId.length>0){
@@ -79,6 +89,13 @@ class IndexPage{
     get ingredientsElements(){
         return(this.recettesAfficher.map(recette=> recette.ingredients))
     }
+    displayNonRecette(message){
+        const recettesSection = document.querySelector(".sectionCard");
+        recettesSection.innerHTML='';
+        const p = document.createElement('p')
+        p.textContent = message;
+        recettesSection.appendChild(p)
+    }
     displayListe(){
        this.getERecettesAfficher();
          let map ={
@@ -91,8 +108,12 @@ class IndexPage{
             liste.getListe();
             // liste.choixOption(this.rechercheTag.bind(this))
         }
-        
-         document.querySelectorAll('li[type="button"]').forEach((element)=>{element.addEventListener('click', this.rechercheTag.bind(this))})
+        document.querySelectorAll('li[type="button"]').forEach((element)=>{element.addEventListener('click', this.rechercheTag.bind(this))})
+        if(this.listTagSelect.length != 0){
+            for(let i=0; i<this.listTagSelect.length; i++){
+                document.getElementById(this.listTagSelect[i]).classList.add('tag-select');
+            }
+        }
     }
     displayData(){
         const recettesSection = document.querySelector(".sectionCard");
@@ -108,6 +129,18 @@ class IndexPage{
         const domNbrRecettes = document.querySelector('.fontStyle');
         domNbrRecettes.textContent = `${nbrRecettes} recettes`;
     }
+    ActualIdRecettesAfficher(){
+        if(this.tabId.length == 0){
+            this.recettesAfficher.forEach((recette)=>{
+                this.tabId.push(recette.id)
+            })   
+        }else{
+            this.tabId = [];
+            this.recettesAfficher.forEach((recette)=>{
+                this.tabId.push(recette.id)
+            }) 
+        }
+    }
     listeIngredients (ingredientsElement, expression){
         let existe = false ; 
         let i = 0 ; 
@@ -119,26 +152,35 @@ class IndexPage{
         }
         return(existe)
     }
-    recherche(expression){
-        let tabIncludes = [];
+    listeRecetteChampsPrincpaleSansTag(expression){
+        this.tabId=[]
         this.getERecettesAfficher();
+        let recettesAfficherPrinc = [];
         for(let i=0; i< this.titres.length; i++){
             if ((this.titres[i].toLowerCase().includes(expression)) || 
             (this.descriptions[i].toLowerCase().includes(expression)) || (this.listeIngredients(this.ingredientsElements[i], expression)) ){
-                // tabIncludes.push(this.titres[i]);
-                tabIncludes.push(i+1)
+                recettesAfficherPrinc.push(this.recettesAfficher[i])
             }
         }
-        console.log(tabIncludes)
-        if(this.tabId.length == 0){
-            this.tabId = tabIncludes
-        }else{
-            this.tabId = [];
-            this.tabId = tabIncludes
+        this.recettesAfficher = recettesAfficherPrinc;
+        this.recettesAfficher.forEach((recette)=>{
+            this.tabIdPrincipale.push(recette.id)
+        }) 
+    }
+    recherche(expression){
+        this.getERecettesAfficher();
+        let recettesAfficherPrinc = [];
+        for(let i=0; i< this.titres.length; i++){
+            if ((this.titres[i].toLowerCase().includes(expression)) || 
+            (this.descriptions[i].toLowerCase().includes(expression)) || (this.listeIngredients(this.ingredientsElements[i], expression)) ){
+                recettesAfficherPrinc.push(this.recettesAfficher[i])
+            }
         }
+        this.recettesAfficher = recettesAfficherPrinc;
+        this.ActualIdRecettesAfficher()
         console.log(this.tabId)
         if(this.tabId.length == 0){
-            alert(`Aucune recette ne contient " ${expression} " vous pouvez chercher (tarte aux pommes)`)
+            this.displayNonRecette(`Aucune recette ne contient " ${expression} " vous pouvez chercher (tarte aux pommes)`)
             console.log(this.tabId == [])
         }else{
             return(this.displayData(), this.displayListe())
@@ -153,81 +195,23 @@ class IndexPage{
         tag.deleteOption(this.rechercheTagRestant.bind(this))  
     }
     rechercheTag(e){
-        if(e.currentTarget.parentElement != null){
-            let tag = e.currentTarget.textContent;
-            let element =  e.currentTarget.parentElement.parentElement;
-            console.log(element)
-            console.log(tag)
-            this.getTagSelect(tag, element.parentElement)
+        let tag = e.currentTarget.textContent;
+        let element =  e.currentTarget.parentElement.parentElement;
+        console.log(element)
+        console.log(tag)
+        if(this.listTagSelect.includes(tag) == false){
+            this.getTagSelect(tag, element.parentElement);
             console.log(document.querySelector('.tag button'))
             // document.querySelector.forEach((ele)=>{ele.addEventListener('click', this.rechercheTagRestant.bind(this))});
             this.getERecettesAfficher()
-            if(element.id == "ingredients"){
-                this.listTagSelect.push(tag);
-                const newRecettesAfficher = this.recettesAfficher.filter((recette)=>{
-                    let existe = false;
-                    recette.ingredients.forEach((element)=>{
-                        if(element.ingredient.toLowerCase() == tag.toLowerCase()){
-                            existe = true;
-                        }
-                        
-                    })
-                    return(existe)
-                })
-                console.log(newRecettesAfficher)
-                if(this.tabId.length == 0){
-                    newRecettesAfficher.forEach((recette)=>{
-                    this.tabId.push(recette.id)
-                    
-                    })
-                }else{
-                    this.tabId = [];
-                    newRecettesAfficher.forEach((recette)=>{
-                        this.tabId.push(recette.id)
-                    }) 
-                }
-               
-            }else if(element.id == "Appareils"){
-                this.listTagSelect.push(tag)
-                 const newRecettesAfficherA = this.recettesAfficher.filter((recette)=>recette.appliance == tag)
-                 console.log(newRecettesAfficherA)
-                if(this.tabId.length == 0){
-                    newRecettesAfficherA.forEach((recette)=>{
-                    this.tabId.push(recette.id)
-                    
-                    })
-                }else{
-                    this.tabId = [];
-                    newRecettesAfficherA.forEach((recette)=>{
-                        this.tabId.push(recette.id)
-                    }) 
-                }
-            }else{
-                this.listTagSelect.push(tag)
-                const newRecettesAfficherU = this.recettesAfficher.filter((recette)=>{
-                    let existe = false;
-                    recette.ustensils.forEach((element)=>{
-                        if(element == tag){
-                            existe = true;
-                        }
-                    })
-                    return(existe)
-                })
-                console.log(newRecettesAfficherU)
-                if(this.tabId.length == 0){
-                    newRecettesAfficherU.forEach((recette)=>{
-                    this.tabId.push(recette.id)
-                    
-                    })
-                }else{
-                    this.tabId = [];
-                    newRecettesAfficherU.forEach((recette)=>{
-                        this.tabId.push(recette.id)
-                    }) 
-                }
-            }
+            this.listTagSelect.push(tag);
+            this.recettesAfficher = this.recettesAfficher.filter((recette)=>{
+                return this.verifExistance(recette.ingredients, 'ingredient', tag) || 
+                this.verifExistanceU(recette.ustensils, tag) ||
+                recette.appliance == tag;
+            })
+            this.ActualIdRecettesAfficher();
             return(this.displayData(), this.displayListe())
-            
         }   
     }
     verifExistance(option, sousElement, tag){
@@ -248,14 +232,35 @@ class IndexPage{
         })
         return(existe)
     }
+    listeRecetteTagSansChampsPrincipale(){
+        this.tabId=[];
+        this.getERecettesAfficher();
+        console.log(this.listTagSelect)
+        this.listTagSelect.forEach((tag)=>{
+            this.recettesAfficher = this.recettesAfficher.filter((recette)=>{
+                return this.verifExistance(recette.ingredients, 'ingredient', tag) || 
+                this.verifExistanceU(recette.ustensils, tag) ||
+                 recette.appliance == tag;
+            })
+        })
+        this.recettesAfficher.forEach((recette)=>{
+            this.tabIdTag.push(recette.id)
+        }) 
+
+    }
     rechercheTagRestant(e){
         console.log(e.currentTarget)
         console.log(e.currentTarget.parentElement.firstElementChild.textContent)
         let tagSupprimer = e.currentTarget.parentElement.firstElementChild.textContent;
+        document.getElementById(tagSupprimer).classList.remove('tag-select');
         console.log(this.listTagSelect)
         e.currentTarget.parentElement.remove()
-        //ajout de fonction qui supprimer la tag
-        this.tabId = []
+        if(this.tabIdPrincipale.length >0){
+            this.tabId = this.tabIdPrincipale;
+        }else{
+            this.tabId = [];
+        }
+        // this.tabId = []
         this.getERecettesAfficher();
         this.listTagSelect= this.listTagSelect.filter(item => item !== tagSupprimer);
         console.log(this.listTagSelect)
@@ -266,21 +271,9 @@ class IndexPage{
                  recette.appliance == tag;
             })
         })
-        if(this.tabId.length == 0){
-            this.recettesAfficher.forEach((recette)=>{
-            this.tabId.push(recette.id)
-            
-            })
-        }else{
-            this.tabId = [];
-            this.recettesAfficher.forEach((recette)=>{
-                this.tabId.push(recette.id)
-            }) 
-        }
-       
+        this.ActualIdRecettesAfficher();
         return(this.displayData(), this.displayListe())
     }
-
 }
 
 class Card{

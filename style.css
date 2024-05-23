@@ -125,3 +125,9 @@ section button{
 .tag{
     border-radius: 0.625rem;
 }
+.tag-select {
+    background-color: yellow;
+}
+/* .liste-block li:active{
+    background-color: yellow;
+} */

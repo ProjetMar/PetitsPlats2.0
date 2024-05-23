@@ -20,6 +20,7 @@ class ListeDom{
         const clone = this.template("templateOptionTri");
         const li = clone.querySelector('li');
         li.textContent = ingredient;
+        li.setAttribute('id', li.textContent);
         return(clone)
     }
     getListe(){
