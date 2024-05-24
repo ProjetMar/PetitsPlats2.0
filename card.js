@@ -12,10 +12,10 @@ class IndexPage{
     constructor(recettes){
         this.recettes = recettes; 
         this.recettesAfficher = [];
-        this.tabId = [];
+        this.recipe_ids_show = [];
         this.listTagSelect = [];
-        this.tabIdPrincipale = [];
-        this.tabIdTag = [];
+        this.recipe_ids_after_search = [];
+        this.recipe_ids_after_tags = [];
         this.inputPrincipale = document.getElementById('input1');
         document.getElementById('searhButton').addEventListener('click', ()=>{
             this.btnRecherchePrincipale()
@@ -42,19 +42,19 @@ class IndexPage{
         const input = document.getElementById('input1');
         if(input.value.length>=3){
             this.recherche(input.value.toLowerCase())
-            this.listeRecetteChampsPrincpaleSansTag(input.value.toLowerCase())
+            this.get_recipe_ids_search(input.value.toLowerCase())
         }else{
             this.backToInitial();
         }
     }
     backToInitial(){
         
-        this.tabIdPrincipale=[];
-        this.listeRecetteTagSansChampsPrincipale();
-        if(this.tabIdTag.length > 0){
-            this.tabId = this.tabIdTag;
+        this.recipe_ids_after_search=[];
+        this.get_recipe_ids_tags();
+        if(this.recipe_ids_after_tags.length > 0){
+            this.recipe_ids_show = this.recipe_ids_after_tags;
         }else{
-            this.tabId =[];
+            this.recipe_ids_show =[];
         }
         this.getERecettesAfficher();
         this.displayData();
@@ -62,8 +62,8 @@ class IndexPage{
         
     }
     getERecettesAfficher(){
-        if(this.tabId.length>0){
-            this.recettesAfficher = this.recettes.filter((recette)=>this.tabId.includes(recette.id))
+        if(this.recipe_ids_show.length>0){
+            this.recettesAfficher = this.recettes.filter((recette)=>this.recipe_ids_show.includes(recette.id))
         }else{
             this.recettesAfficher = this.recettes
         }
@@ -130,14 +130,14 @@ class IndexPage{
         domNbrRecettes.textContent = `${nbrRecettes} recettes`;
     }
     ActualIdRecettesAfficher(){
-        if(this.tabId.length == 0){
+        if(this.recipe_ids_show.length == 0){
             this.recettesAfficher.forEach((recette)=>{
-                this.tabId.push(recette.id)
+                this.recipe_ids_show.push(recette.id)
             })   
         }else{
-            this.tabId = [];
+            this.recipe_ids_show = [];
             this.recettesAfficher.forEach((recette)=>{
-                this.tabId.push(recette.id)
+                this.recipe_ids_show.push(recette.id)
             }) 
         }
     }
@@ -152,8 +152,8 @@ class IndexPage{
         }
         return(existe)
     }
-    listeRecetteChampsPrincpaleSansTag(expression){
-        this.tabId=[]
+    get_recipe_ids_search(expression){
+        this.recipe_ids_show=[]
         this.getERecettesAfficher();
         let recettesAfficherPrinc = [];
         for(let i=0; i< this.titres.length; i++){
@@ -164,7 +164,7 @@ class IndexPage{
         }
         this.recettesAfficher = recettesAfficherPrinc;
         this.recettesAfficher.forEach((recette)=>{
-            this.tabIdPrincipale.push(recette.id)
+            this.recipe_ids_after_search.push(recette.id)
         }) 
     }
     recherche(expression){
@@ -178,10 +178,10 @@ class IndexPage{
         }
         this.recettesAfficher = recettesAfficherPrinc;
         this.ActualIdRecettesAfficher()
-        console.log(this.tabId)
-        if(this.tabId.length == 0){
+        console.log(this.recipe_ids_show)
+        if(this.recipe_ids_show.length == 0){
             this.displayNonRecette(`Aucune recette ne contient " ${expression} " vous pouvez chercher (tarte aux pommes)`)
-            console.log(this.tabId == [])
+            console.log(this.recipe_ids_show == [])
         }else{
             return(this.displayData(), this.displayListe())
         }
@@ -232,8 +232,8 @@ class IndexPage{
         })
         return(existe)
     }
-    listeRecetteTagSansChampsPrincipale(){
-        this.tabId=[];
+    get_recipe_ids_tags(){
+        this.recipe_ids_show=[];
         this.getERecettesAfficher();
         console.log(this.listTagSelect)
         this.listTagSelect.forEach((tag)=>{
@@ -244,7 +244,7 @@ class IndexPage{
             })
         })
         this.recettesAfficher.forEach((recette)=>{
-            this.tabIdTag.push(recette.id)
+            this.recipe_ids_after_tags.push(recette.id)
         }) 
 
     }
@@ -255,12 +255,12 @@ class IndexPage{
         document.getElementById(tagSupprimer).classList.remove('tag-select');
         console.log(this.listTagSelect)
         e.currentTarget.parentElement.remove()
-        if(this.tabIdPrincipale.length >0){
-            this.tabId = this.tabIdPrincipale;
+        if(this.recipe_ids_after_search.length >0){
+            this.recipe_ids_show = this.recipe_ids_after_search;
         }else{
-            this.tabId = [];
+            this.recipe_ids_show = [];
         }
-        // this.tabId = []
+        // this.recipe_ids_show = []
         this.getERecettesAfficher();
         this.listTagSelect= this.listTagSelect.filter(item => item !== tagSupprimer);
         console.log(this.listTagSelect)
