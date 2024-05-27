@@ -1,14 +1,3 @@
-
-function recpereliste (inputId){
-    if( inputId == 'input2'){
-        return document.querySelector('.ingredients');
-    }else if(inputId == 'input3'){
-        return document.querySelector('.Appareils');
-    }else if(inputId == 'input4'){
-    return document.querySelector('.Ustensiles')
-    }
-}
-
 function showClearButton(inputId) {
     const input = document.getElementById(inputId);
     const clearButton = input.nextElementSibling;
@@ -56,10 +45,7 @@ function showClearButton(inputId) {
                 liste.appendChild(item);
             });
         }
-    }              
-    
-     
-    
+    }                  
 }
 
 function clearInput(inputId) {
@@ -68,23 +54,6 @@ function clearInput(inputId) {
     const clearButton = input.nextElementSibling;
     clearButton.style.display = 'none';
 }
-/* 
-// Fonction pour appliquer la propriété CSS en fonction de la taille de l'écran
-function appliquerCSS(parentList) {
-    // Vérifiez la largeur de l'écran
-    const largeurEcran = window.innerWidth;
-
-    // Si la largeur de l'écran est inférieure à 768 pixels (taille moyenne)
-    if (largeurEcran < 768) {
-        // Appliquez la propriété CSS à l'élément
-        parentList.style.order = "3";
-    } else {
-        // Réinitialisez la propriété CSS si la taille de l'écran est supérieure à 768 pixels
-        parentList.style.order = "0";
-    }
-} */
-// j'ai ajouter la prop order et la fonction appliquer pour resoudre le problem des boutons qui seront 
-//sous les elements ouvert des autres boutons 
 function openListe(listId) {
     const listes = document.querySelectorAll('.liste-block');
     const list = document.getElementById(listId);
@@ -93,15 +62,23 @@ function openListe(listId) {
     
     for(let i=0; i<listes.length; i++){
         listes[i].style.visibility = "hidden";
-        // listes[i].parentElement.style.order = "0";
     }
-   /*  // Appelez la fonction une fois au chargement de la page
-    appliquerCSS(parentList);
-    // Ajoutez un écouteur d'événement pour redimensionner la fenêtre
-    window.addEventListener("resize", appliquerCSS(parentList)); */
     list.style.visibility = "visible";
     list.querySelectorAll('li').forEach((li)=>{
         li.addEventListener('click',()=>{
+            let span = li.querySelector('span');
+            
+            let p = li.querySelector('p');
+            if(span.classList.value.includes('d-block')){
+                span.classList.remove('d-block');
+                span.classList.add('d-none');
+                li.classList.remove('tag-select');
+                document.querySelectorAll('.tag p').forEach((element)=>{
+                    if(element.textContent == p.textContent){
+                        element.parentElement.remove()
+                    }
+                })
+            }
             closeListe(listId)
         })
     })
@@ -110,5 +87,4 @@ function closeListe(listId){
     const list = document.getElementById(listId);
     const parentList = list.parentElement;
     list.style.visibility = "hidden";
-    //  parentList.style.order = "0";
 }

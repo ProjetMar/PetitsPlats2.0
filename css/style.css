@@ -3,7 +3,7 @@ body{
     overflow-x: hidden;
 }
 header{
-    background-image: url(Photos\ P7\ JS\ Les\ petits\ plats/Image-de-fond.jpg);
+    background-image: url(../Photos\ P7\ JS\ Les\ petits\ plats/Image-de-fond.jpg);
     background-size: cover;
     padding: 200px 0; 
 }
@@ -109,10 +109,13 @@ section button{
     object-fit: cover;
 }
 .dom-description{
-    display: -webkit-box;
-   -webkit-line-clamp: 5; /* Limite le nombre de lignes à afficher */
-   -webkit-box-orient: vertical;
+    height: 85px;
    overflow: hidden;
+}
+.dom-description:hover{
+    overflow: scroll;
+    scrollbar-width: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 .time-block{
     top: 2%;
@@ -126,8 +129,12 @@ section button{
     border-radius: 0.625rem;
 }
 .tag-select {
-    background-color: yellow;
+    background-color:#ffc107;
+    font-weight: bold;
 }
 /* .liste-block li:active{
     background-color: yellow;
 } */
+.liste-block ul{
+    scrollbar-width: none;
+}

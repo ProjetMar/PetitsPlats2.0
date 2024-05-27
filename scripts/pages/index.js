@@ -25,18 +25,15 @@ class IndexPage{
                 this.btnRecherchePrincipale()
             }
         })
-        // this.inputPrincipale.addEventListener('input', ()=>{
-        //     this.backToInitial()
-        // })
-        // document.getElementById('clearBtnInput1').addEventListener('click',()=>{
-        //     this.backToInitial()
-        // })
         // pour faire revenir la liste à son etat intial 
         document.querySelectorAll('.liste-block input').forEach((element)=>element.addEventListener('input',(e)=>{
              if(e.currentTarget.value == ''){
                 this.displayListe()
              }
         }))
+        document.getElementById('clearBtnInput1').addEventListener('click', ()=>{
+            this.backToInitial()
+        })
     }
     btnRecherchePrincipale(){
         const input = document.getElementById('input1');
@@ -112,6 +109,13 @@ class IndexPage{
         if(this.listTagSelect.length != 0){
             for(let i=0; i<this.listTagSelect.length; i++){
                 document.getElementById(this.listTagSelect[i]).classList.add('tag-select');
+                document.getElementById(this.listTagSelect[i]).querySelector('span').classList.remove('d-none');
+                document.getElementById(this.listTagSelect[i]).querySelector('span').classList.add('d-block'); 
+                document.getElementById(this.listTagSelect[i]).addEventListener('click',()=>{
+                   if(document.getElementById(this.listTagSelect[i]).classList.value.includes('tag-select')){
+                    this.filtreTagSupprimer(this.listTagSelect[i])
+                   }
+                })        
             }
         }
     }
@@ -141,42 +145,62 @@ class IndexPage{
             }) 
         }
     }
-    listeIngredients (ingredientsElement, expression){
+    //methode ou j'ai utilisé les methodes native
+    myIncludes(mainString, subString) {
+        for (let i = 0; i <= mainString.length - subString.length; i++) {
+            let match = true;
+            for (let j = 0; j < subString.length; j++) {
+                if (mainString[i + j] !== subString[j]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                return true;
+            }
+        }
+        return false;
+    }
+    verifListeIngredients (ingredientsElement, expression){
         let existe = false ; 
         let i = 0 ; 
         while(i<ingredientsElement[i].length && existe == false){
-            if(ingredientsElement[i].toLowerCase().includes(expression)){
+            if(this.myIncludes(ingredientsElement[i].toLowerCase(),expression)){
                 existe = true;
             }
             i = i+1;
         }
         return(existe)
     }
+    //filtre apres saisie champ principale 
+    filter_Recettes_ChampPrincipale(expression){
+        let recettesAfficherPrinc = [];
+        for(let i=0; i< this.titres.length; i++){
+            if (this.myIncludes(this.titres[i].toLowerCase(), expression) || 
+            (this.myIncludes(this.descriptions[i].toLowerCase(), expression)) || (this.verifListeIngredients(this.ingredientsElements[i], expression)) ){
+                // recettesAfficherPrinc.push(this.recettesAfficher[i])
+                recettesAfficherPrinc[recettesAfficherPrinc.length] = this.recettesAfficher[i];
+            }
+        }
+        return(recettesAfficherPrinc)
+    }
+    //methode ou j'ai utilisé seulement les methodes native 
     get_recipe_ids_search(expression){
         this.recipe_ids_show=[]
         this.getERecettesAfficher();
-        let recettesAfficherPrinc = [];
-        for(let i=0; i< this.titres.length; i++){
-            if ((this.titres[i].toLowerCase().includes(expression)) || 
-            (this.descriptions[i].toLowerCase().includes(expression)) || (this.listeIngredients(this.ingredientsElements[i], expression)) ){
-                recettesAfficherPrinc.push(this.recettesAfficher[i])
-            }
+        this.recettesAfficher = this.filter_Recettes_ChampPrincipale(expression);
+        // this.recettesAfficher.forEach((recette)=>{
+        //     this.recipe_ids_after_search.push(recette.id)
+        // }) 
+        for (let i = 0; i < this.recettesAfficher.length; i++) {
+            this.recipe_ids_after_search[this.recipe_ids_after_search.length] = this.recettesAfficher[i].id;
         }
-        this.recettesAfficher = recettesAfficherPrinc;
-        this.recettesAfficher.forEach((recette)=>{
-            this.recipe_ids_after_search.push(recette.id)
-        }) 
+        console.log(this.recipe_ids_after_search)
     }
+    //methode ou j'ai utilisé seulement les methodes native 
     recherche(expression){
         this.getERecettesAfficher();
-        let recettesAfficherPrinc = [];
-        for(let i=0; i< this.titres.length; i++){
-            if ((this.titres[i].toLowerCase().includes(expression)) || 
-            (this.descriptions[i].toLowerCase().includes(expression)) || (this.listeIngredients(this.ingredientsElements[i], expression)) ){
-                recettesAfficherPrinc.push(this.recettesAfficher[i])
-            }
-        }
-        this.recettesAfficher = recettesAfficherPrinc;
+        this.recettesAfficher = this.filter_Recettes_ChampPrincipale(expression);
         this.ActualIdRecettesAfficher()
         console.log(this.recipe_ids_show)
         if(this.recipe_ids_show.length == 0){
@@ -194,6 +218,13 @@ class IndexPage{
         parentList.appendChild(elementTag);
         tag.deleteOption(this.rechercheTagRestant.bind(this))  
     }
+    filter_recettes_tag(tag){
+        this.recettesAfficher = this.recettesAfficher.filter((recette)=>{
+            return this.verifExistance(recette.ingredients, 'ingredient', tag) || 
+            this.verifExistanceU(recette.ustensils, tag) ||
+            recette.appliance == tag;
+        })
+    }
     rechercheTag(e){
         let tag = e.currentTarget.textContent;
         let element =  e.currentTarget.parentElement.parentElement;
@@ -202,14 +233,9 @@ class IndexPage{
         if(this.listTagSelect.includes(tag) == false){
             this.getTagSelect(tag, element.parentElement);
             console.log(document.querySelector('.tag button'))
-            // document.querySelector.forEach((ele)=>{ele.addEventListener('click', this.rechercheTagRestant.bind(this))});
             this.getERecettesAfficher()
             this.listTagSelect.push(tag);
-            this.recettesAfficher = this.recettesAfficher.filter((recette)=>{
-                return this.verifExistance(recette.ingredients, 'ingredient', tag) || 
-                this.verifExistanceU(recette.ustensils, tag) ||
-                recette.appliance == tag;
-            })
+            this.filter_recettes_tag(tag)
             this.ActualIdRecettesAfficher();
             return(this.displayData(), this.displayListe())
         }   
@@ -237,24 +263,16 @@ class IndexPage{
         this.getERecettesAfficher();
         console.log(this.listTagSelect)
         this.listTagSelect.forEach((tag)=>{
-            this.recettesAfficher = this.recettesAfficher.filter((recette)=>{
-                return this.verifExistance(recette.ingredients, 'ingredient', tag) || 
-                this.verifExistanceU(recette.ustensils, tag) ||
-                 recette.appliance == tag;
-            })
+            this.filter_recettes_tag(tag)
         })
         this.recettesAfficher.forEach((recette)=>{
             this.recipe_ids_after_tags.push(recette.id)
         }) 
 
     }
-    rechercheTagRestant(e){
-        console.log(e.currentTarget)
-        console.log(e.currentTarget.parentElement.firstElementChild.textContent)
-        let tagSupprimer = e.currentTarget.parentElement.firstElementChild.textContent;
+    filtreTagSupprimer(tagSupprimer){
         document.getElementById(tagSupprimer).classList.remove('tag-select');
         console.log(this.listTagSelect)
-        e.currentTarget.parentElement.remove()
         if(this.recipe_ids_after_search.length >0){
             this.recipe_ids_show = this.recipe_ids_after_search;
         }else{
@@ -274,60 +292,13 @@ class IndexPage{
         this.ActualIdRecettesAfficher();
         return(this.displayData(), this.displayListe())
     }
-}
-
-class Card{
-    constructor(data){
-        this.name = data.name;
-        this.image = data.image;
-        this.description = data.description;
-        this.time = data.time;
-        this.ingredients = data.ingredients;
-        this.id = data.id;
-      }
-    get picture (){
-        return(`Photos\ P7\ JS\ Les\ petits\ plats/${this.image}`)
-    }
-    template(idTemplate){
-        const template = document.getElementById(idTemplate);
-        const clone = document.importNode(template.content,true);
-        return(clone)
-    }
-    elementliste(ingredient, quantity, unit){
-        const clone = this.template('templateElementListe');
-        const ingredientElement = clone.querySelector('.dom-ingredient');
-        ingredientElement.textContent = ingredient;
-        const quantityElement = clone.querySelector('.dom-unit');
-        if(unit != null){
-            if(unit == "cuillères à soupe"){
-                quantityElement.textContent = `${quantity} ${unit}`;
-            }else{
-                quantityElement.textContent = `${quantity}${unit}`;
-            }    
-        }else{
-            quantityElement.textContent = quantity;
-        }
-        return(clone)
-    }
-    getCardRecette(){
-        const clone = this.template('templateCard');
-        const elementParent = clone.querySelector('div');
-        elementParent.setAttribute('id', this.id);
-        const titre = clone.querySelector('.dom-titre');
-        titre.textContent = this.name;
-        const image = clone.querySelector('img');
-        image.setAttribute("src", this.picture);
-        image.setAttribute("alt", this.name);
-        const Time = clone.querySelector('.time-block');
-        Time.textContent = `${this.time}min`;
-        const desc= clone.querySelector('.dom-description');
-        desc.textContent = this.description;
-        const liste = clone.querySelector('ul');
-        for(let i=0; i<this.ingredients.length; i++){
-            let element = this.elementliste(this.ingredients[i].ingredient, this.ingredients[i].quantity, this.ingredients[i].unit);
-            liste.appendChild(element);
-        }
-        return(clone)
+    //fonction qui recherche apres avoir supprimer un tag
+    rechercheTagRestant(e){
+        console.log(e.currentTarget)
+        console.log(e.currentTarget.parentElement.firstElementChild.textContent)
+        let tagSupprimer = e.currentTarget.parentElement.firstElementChild.textContent;
+        e.currentTarget.parentElement.remove();
+        this.filtreTagSupprimer(tagSupprimer);
     }
 }
 async function init() {
@@ -336,23 +307,5 @@ async function init() {
     const indexpage = new IndexPage(recettes)
     indexpage.displayData()
     indexpage.displayListe()
-    // document.querySelectorAll('li[type="button"]').forEach((element)=>{element.addEventListener('click', (e)=>{
-    //      indexpage.rechercheTag(e.currentTarget.textContent, e.currentTarget.parentElement.parentElement)
-    //  })})
-    // const titres = recettes.map(recette=>recette.name);
-    // console.log(titres)
-    // const descriptions = recettes.map(recette=>recette.description);
-    // console.log(descriptions)
-    // const ingredientsElements = recettes.map(recette=> recette.ingredients);
-    // console.log(ingredientsElements)
-    // document.getElementById('searhButton').addEventListener('click', ()=>{
-    //     const input = document.getElementById('input1');
-    //     if(input.value.length>=3){
-    //         recherche(titres, descriptions ,ingredientsElements,input.value)
-    //     }
-    // })
-    // recherche(titres, descriptions ,ingredientsElements , "limonade");
-    // let tab = recherche(titres, descriptions ,ingredientsElements ,"limonade");
-    // supprimeCard(tab);
 }
 init()
