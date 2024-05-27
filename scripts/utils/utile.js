@@ -1,3 +1,12 @@
+function recpereliste (inputId){
+    if( inputId == 'input2'){
+        return document.querySelector('.ingredients');
+    }else if(inputId == 'input3'){
+        return document.querySelector('.Appareils');
+    }else if(inputId == 'input4'){
+    return document.querySelector('.Ustensiles')
+    }
+}
 function showClearButton(inputId) {
     const input = document.getElementById(inputId);
     const clearButton = input.nextElementSibling;

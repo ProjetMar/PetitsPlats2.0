@@ -45,7 +45,6 @@ class IndexPage{
         }
     }
     backToInitial(){
-        
         this.recipe_ids_after_search=[];
         this.get_recipe_ids_tags();
         if(this.recipe_ids_after_tags.length > 0){
@@ -56,7 +55,6 @@ class IndexPage{
         this.getERecettesAfficher();
         this.displayData();
         this.displayListe();
-        
     }
     getERecettesAfficher(){
         if(this.recipe_ids_show.length>0){
@@ -146,42 +144,55 @@ class IndexPage{
         }
     }
     //methode ou j'ai utilisé les methodes native
-    myIncludes(mainString, subString) {
-        for (let i = 0; i <= mainString.length - subString.length; i++) {
-            let match = true;
-            for (let j = 0; j < subString.length; j++) {
-                if (mainString[i + j] !== subString[j]) {
-                    match = false;
-                    break;
-                }
+    // myIncludes(mainString, subString) {
+    //     for (let i = 0; i <= mainString.length - subString.length; i++) {
+    //         let match = true;
+    //         for (let j = 0; j < subString.length; j++) {
+    //             if (mainString[i + j] !== subString[j]) {
+    //                 match = false;
+    //                 break;
+    //             }
+    //         }
+    //         if (match) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+    // verifListeIngredients (ingredientsElement, expression){
+    //     let existe = false ; 
+    //     let i = 0 ; 
+    //     while(i<ingredientsElement[i].length && existe == false){
+    //         if(this.myIncludes(ingredientsElement[i].toLowerCase(),expression)){
+    //             existe = true;
+    //         }
+    //         i = i+1;
+    //     }
+    //     return(existe)
+    // }
+    verifIncludes(listIngredients, ingredient, expression){
+        let include = false;
+        listIngredients.forEach((option)=>{
+            if(option[ingredient].toLowerCase().includes(expression)){
+                include = true;
             }
-            if (match) {
-                return true;
-            }
-        }
-        return false;
-    }
-    verifListeIngredients (ingredientsElement, expression){
-        let existe = false ; 
-        let i = 0 ; 
-        while(i<ingredientsElement[i].length && existe == false){
-            if(this.myIncludes(ingredientsElement[i].toLowerCase(),expression)){
-                existe = true;
-            }
-            i = i+1;
-        }
-        return(existe)
+        })
+        return(include)
     }
     //filtre apres saisie champ principale 
     filter_Recettes_ChampPrincipale(expression){
         let recettesAfficherPrinc = [];
-        for(let i=0; i< this.titres.length; i++){
-            if (this.myIncludes(this.titres[i].toLowerCase(), expression) || 
-            (this.myIncludes(this.descriptions[i].toLowerCase(), expression)) || (this.verifListeIngredients(this.ingredientsElements[i], expression)) ){
-                // recettesAfficherPrinc.push(this.recettesAfficher[i])
-                recettesAfficherPrinc[recettesAfficherPrinc.length] = this.recettesAfficher[i];
-            }
-        }
+        // for(let i=0; i< this.titres.length; i++){
+        //     if (this.myIncludes(this.titres[i].toLowerCase(), expression) || 
+        //     (this.myIncludes(this.descriptions[i].toLowerCase(), expression)) || (this.verifListeIngredients(this.ingredientsElements[i], expression)) ){
+        //         // recettesAfficherPrinc.push(this.recettesAfficher[i])
+        //         recettesAfficherPrinc[recettesAfficherPrinc.length] = this.recettesAfficher[i];
+        //     }
+        // }
+        recettesAfficherPrinc = this.recettesAfficher.filter((recette)=>{
+            return(recette.name.toLowerCase().includes(expression) || recette.description.toLowerCase().includes(expression) || 
+            this.verifIncludes(recette.ingredients, 'ingredient', expression))
+        })
         return(recettesAfficherPrinc)
     }
     //methode ou j'ai utilisé seulement les methodes native 
