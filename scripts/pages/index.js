@@ -78,8 +78,8 @@ class IndexPage{
     }
     
     btnRecherchePrincipale(){
-        this.remove_all_tags()
-        
+        this.remove_all_tags()  
+
         const input = document.getElementById('input1');
         if(input.value.length>=3){
             this.filter_by_text(input.value.toLowerCase());
@@ -180,7 +180,7 @@ class IndexPage{
         let existe = false ; 
         let i = 0 ; 
         while(i<ingredientsElement[i].length && existe == false){
-            if(this.containString(ingredientsElement[i].toLowerCase(),expression)){
+            if(this.containString(ingredientsElement[i].ingredient.toLowerCase(),expression)){
                 existe = true;
             }
             i = i+1;
