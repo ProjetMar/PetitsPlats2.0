@@ -41,16 +41,21 @@ class IndexPage{
     filter_by_text(txt){
         // filtrer toutes les recettes par expression
         let recettesAfficherPrinc = [];
-        for(let i=0; i< this.recettes.length; i++){
-            if (this.containString(this.recettes[i].name.toLowerCase(), txt) || 
-            (this.containString(this.recettes[i].description.toLowerCase(), txt)) || (this.verifListeIngredients(this.recettes[i].ingredients, txt)) ){
-                recettesAfficherPrinc[recettesAfficherPrinc.length] = this.recettes[i];
+        this.recettes.forEach((recette)=>{
+            if(recette.name.toLowerCase().includes(txt) || recette.description.toLowerCase().includes(txt) || 
+            this.verifExistanceIng(recette.ingredients, txt)){
+                recettesAfficherPrinc.push(recette)
             }
-        }
+        })
         this.list_receipt_filtred_by_txt = recettesAfficherPrinc;
         this.recettesAfficher = this.list_receipt_filtred_by_txt;
     }
-
+    // //remplace verifListeIngredients
+    verifExistanceIng(ingredientsElement, expression){
+        return ingredientsElement.some(ingredientObj => 
+            ingredientObj.ingredient.toLowerCase().includes(expression.toLowerCase())
+        );
+    }
     filter_by_tags(){
         this.recettesAfficher = this.list_receipt_filtred_by_txt;
         this.listTagSelect.forEach((tag)=>{
@@ -67,6 +72,7 @@ class IndexPage{
             document.querySelectorAll('.tag').forEach((element)=>{
                 element.remove()
             })
+            document.querySelectorAll('.tag')
             this.listTagSelect.forEach((element)=>{   
                 document.getElementById(element).classList.add('tag-select');
                 document.getElementById(element).querySelector('span').classList.remove('d-block');
@@ -159,33 +165,6 @@ class IndexPage{
         const nbrRecettes = this.recettesAfficher.length;
         const domNbrRecettes = document.querySelector('.fontStyle');
         domNbrRecettes.textContent = `${nbrRecettes} recettes`;
-    }
-    //methode ou j'ai utilisé les methodes native
-    containString(mainString, subString) {
-        for (let i = 0; i <= mainString.length - subString.length; i++) {
-            let match = true;
-            for (let j = 0; j < subString.length; j++) {
-                if (mainString[i + j] !== subString[j]) {
-                    match = false;
-                    break;
-                }
-            }
-            if (match) {
-                return true;
-            }
-        }
-        return false;
-    }
-    verifListeIngredients (ingredientsElement, expression){
-        let existe = false ; 
-        let i = 0 ; 
-        while(i<ingredientsElement[i].length && existe == false){
-            if(this.containString(ingredientsElement[i].toLowerCase(),expression)){
-                existe = true;
-            }
-            i = i+1;
-        }
-        return(existe)
     }
 
     getTagSelect(tagSelect, parentList){
