@@ -41,11 +41,9 @@ class IndexPage{
     filter_by_text(txt){
         // filtrer toutes les recettes par expression
         let recettesAfficherPrinc = [];
-        this.recettes.forEach((recette)=>{
-            if(recette.name.toLowerCase().includes(txt) || recette.description.toLowerCase().includes(txt) || 
-            this.verifExistanceIng(recette.ingredients, txt)){
-                recettesAfficherPrinc.push(recette)
-            }
+        recettesAfficherPrinc = this.recettes.filter((recette)=>{
+            return(recette.name.toLowerCase().includes(txt) || recette.description.toLowerCase().includes(txt) || 
+            this.verifExistanceIng(recette.ingredients, txt))
         })
         this.list_receipt_filtred_by_txt = recettesAfficherPrinc;
         this.recettesAfficher = this.list_receipt_filtred_by_txt;
