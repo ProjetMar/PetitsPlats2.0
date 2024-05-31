@@ -55,7 +55,11 @@ class IndexPage{
         );
     }
     filter_by_tags(){
-        this.recettesAfficher = this.list_receipt_filtred_by_txt;
+        if(this.list_receipt_filtred_by_txt.length>0){
+            this.recettesAfficher = this.list_receipt_filtred_by_txt;
+        }else{
+            this.recettesAfficher=this.recettes;
+        }
         this.listTagSelect.forEach((tag)=>{
             this.recettesAfficher = this.recettesAfficher.filter((recette)=>{
                 return this.verifExistance(recette.ingredients, 'ingredient', tag) || 
@@ -109,13 +113,13 @@ class IndexPage{
        //elements des sous tableau du tableau  
        // new set permet d'elever la repetition des elements 
     get ingredients(){
-         return([...new Set(this.recettesAfficher.map(recette=> recette.ingredients).flatMap(innerArray => innerArray.map(obj => obj.ingredient)))])
+         return([...new Set(this.recettesAfficher.map(recette=> recette.ingredients).flatMap(innerArray => innerArray.map(obj => obj.ingredient.toLowerCase())))])
     }
     get Appareils(){
         return([...new Set(this.recettesAfficher.map(recette=> recette.appliance))])
     }
     get ustensils(){
-        return([...new Set(this.recettesAfficher.map(recette=> recette.ustensils).flat())])
+        return([...new Set(this.recettesAfficher.map(recette=> recette.ustensils).flat().map(ustensil=>ustensil.toLowerCase()))])
     }
     displayNoReceiptFound(message){
         const recettesSection = document.querySelector(".sectionCard");
@@ -194,7 +198,7 @@ class IndexPage{
     verifExistance(option, sousElement, tag){
         let existe = false;
         option.forEach((element)=>{
-            if(element[sousElement] == tag){
+            if(element[sousElement].toLowerCase() == tag){
                 existe = true;
             }
         })
@@ -203,7 +207,7 @@ class IndexPage{
     verifExistanceU(option, tag){
         let existe = false;
         option.forEach((element)=>{
-            if(element == tag){
+            if(element.toLowerCase() == tag){
                 existe = true;
             }
         })
@@ -213,7 +217,11 @@ class IndexPage{
         document.getElementById(tagSupprimer).classList.remove('tag-select');
         console.log(this.listTagSelect)
         this.listTagSelect= this.listTagSelect.filter(item => item !== tagSupprimer);
-        this.filter_by_tags();
+        if(this.listTagSelect.length>0){
+            this.filter_by_tags();
+        }else{
+            this.btnRecherchePrincipale();
+        }
         return(this.displayData(), this.displayListe())
     }
     //fonction qui recherche apres avoir supprimer un tag
