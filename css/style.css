@@ -138,3 +138,6 @@ section button{
 .liste-block ul{
     scrollbar-width: none;
 }
+.liste-block li:hover{
+    background-color: rgba(255, 209, 91, 1);
+}

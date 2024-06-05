@@ -127,6 +127,8 @@ class IndexPage{
         const p = document.createElement('p')
         p.textContent = message;
         recettesSection.appendChild(p)
+        const domNbrRecettes = document.querySelector('.fontStyle');
+        domNbrRecettes.textContent = `0 recettes`;
     }
     displayListe(){
          let map ={
