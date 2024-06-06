@@ -76,7 +76,7 @@ header input{
 .style-btn-close:hover, .btn-hover:hover{
     color: black;
 }
-section button{
+main button{
     padding: 16px 80px 16px 15px;
     background-color: white;
     border-radius: 11px;
